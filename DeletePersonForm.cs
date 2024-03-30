@@ -3,14 +3,14 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Data;
 
-public class DeleteCarForm : Form
+public class DeletePersonForm : Form
 {
     private TextBox _idTextBox;
     private SqlConnection connection;
 
     public int Id { get; private set; }
 
-    public DeleteCarForm(SqlConnection connection)
+    public DeletePersonForm(SqlConnection connection)
     {
         this.connection = connection;
         FormLayout();
@@ -19,7 +19,7 @@ public class DeleteCarForm : Form
     private void FormLayout()
     {
         // Set up form properties
-        this.Text = "Delete Car";
+        this.Text = "Удалить запись";
         this.Size = new System.Drawing.Size(300, 150);
         this.StartPosition = FormStartPosition.CenterParent;
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -28,7 +28,7 @@ public class DeleteCarForm : Form
 
         // Create labels
         Label idLabel = new Label();
-        idLabel.Text = "Car Id:";
+        idLabel.Text = "Id человека :";
         idLabel.Location = new System.Drawing.Point(10, 10);
 
         // Create text boxes
@@ -38,13 +38,13 @@ public class DeleteCarForm : Form
 
         // Create OK and Cancel buttons
         Button okButton = new Button();
-        okButton.Text = "Delete";
+        okButton.Text = "Удалить";
         okButton.DialogResult = DialogResult.OK;
         okButton.Location = new System.Drawing.Point(80, 80);
         okButton.Click += OkButton_Click;
 
         Button cancelButton = new Button();
-        cancelButton.Text = "Cancel";
+        cancelButton.Text = "Закрыть";
         cancelButton.DialogResult = DialogResult.Cancel;
         cancelButton.Location = new System.Drawing.Point(170, 80);
 
@@ -59,7 +59,7 @@ public class DeleteCarForm : Form
     {
         if (!ValidateInput())
         {
-            MessageBox.Show("Invalid input. Please check the fields and try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Некорректный ввод, перепроверьте введённый данные.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             this.DialogResult = DialogResult.Cancel;
             return;
         }
@@ -68,7 +68,7 @@ public class DeleteCarForm : Form
         {
             if (!CarExistsInDatabase())
             {
-                MessageBox.Show("There is no car with the specified ID in the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Отсутствует человек с заданным ID", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.DialogResult = DialogResult.Cancel;
                 return;
             }
@@ -76,23 +76,23 @@ public class DeleteCarForm : Form
         }
         catch (SqlException ex)
         {
-            MessageBox.Show("Database connection error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Ошибка соединения с базой данных: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             this.DialogResult = DialogResult.Cancel;
             return;
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Database connection error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Ошибка соединения с базой данных: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             this.DialogResult = DialogResult.Cancel;
             return;
         }
-        MessageBox.Show("Car with " + Id + " id deleted successfully", "Car added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("Человек с ID " + Id + " успешно удалён", "Человек удалён", MessageBoxButtons.OK, MessageBoxIcon.Information);
         this.DialogResult = DialogResult.OK;
     }
 
     private void RemoveCarFromDatabase()
     {
-        using (SqlCommand command = new SqlCommand("DeleteCar", connection))
+        using (SqlCommand command = new SqlCommand("DeletePerson", connection))
         {
             int.TryParse(_idTextBox.Text, out int parsedId);
             Id = parsedId;
@@ -112,11 +112,11 @@ public class DeleteCarForm : Form
 
     private bool CarExistsInDatabase()
     {
-        using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM Cars WHERE id = @carId", connection))
+        using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM People WHERE id = @Id", connection))
         {
             int.TryParse(_idTextBox.Text, out int parsedId);
             Id = parsedId;
-            command.Parameters.AddWithValue("@carId", Id);
+            command.Parameters.AddWithValue("@Id", Id);
             int count = (int)command.ExecuteScalar();
             return count > 0;
         }

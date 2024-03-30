@@ -1,3 +1,4 @@
+using System.CodeDom;
 using System.Data;
 using System.Data.SqlClient;
 public class Form1 : Form
@@ -13,36 +14,37 @@ public class Form1 : Form
         }
         catch (System.Exception ex)
         {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
         }
     }
 
     public void FormLayout()
     {
-        this.Name = "Database controller";
-        this.Text = "Database controller";
+        this.Name = "База данных";
+        this.Text = "База данных";
         this.Size = new System.Drawing.Size(1000, 500);
         this.StartPosition = FormStartPosition.CenterScreen;
 
         Button addButton = new Button();
-        addButton.Text = "Add";
+        addButton.Text = "Добавить";
         addButton.Location = new System.Drawing.Point(10, 10);
         addButton.Click += AddButton_Click;
 
         Button deleteButton = new Button();
-        deleteButton.Text = "Delete";
+        deleteButton.Text = "Удалить";
         deleteButton.Location = new System.Drawing.Point(120, 10);
         deleteButton.Click += DeleteButton_Click;
 
         Button viewAllButton = new Button();
-        viewAllButton.Text = "View All";
+        viewAllButton.Text = "Просмотреть все";
         viewAllButton.Location = new System.Drawing.Point(230, 10);
         viewAllButton.Click += ViewAllButton_Click;
 
         Button showProcedure = new Button();
-        showProcedure.Text = "Procedures";
+        showProcedure.Text = "Процедуры";
         showProcedure.Location = new System.Drawing.Point(340, 10);
+        showProcedure.Width = 80;
         showProcedure.Click += ShowProcedure_Click;
 
 
@@ -70,18 +72,18 @@ public class Form1 : Form
                         }
                         reader.Close();
 
-                        MessageBox.Show(procedures, "Stored Procedures", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(procedures, "Хранимые процедуры", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
             catch (SqlException ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Ошибка: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         else
         {
-            MessageBox.Show("Database connection is lost.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Потеряно соединение с базой данных.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -91,23 +93,27 @@ public class Form1 : Form
         string connectionString = "Server=(localdb)\\mssqllocaldb;Database=SSPLab2;Trusted_Connection=True;";
 
         connection = new SqlConnection(connectionString);
-            try
-            {
-                // Открываем подключение
-                connection.Open();
+        try
+        {
+            // Открываем подключение
+            connection.Open();
 
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+        }
+        catch (SqlException ex)
+        {
+            MessageBox.Show("Ошибка: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private void ViewAllButton_Click(object sender, EventArgs e)
     {
         if (IsDatabaseConnected())
         {
-            using (ViewAllCarsForm viewAllCarsForm = new ViewAllCarsForm(connection))
+            using (ViewAllPeopleForm viewAllCarsForm = new ViewAllPeopleForm(connection))
             {
                 try
                 {
@@ -115,13 +121,14 @@ public class Form1 : Form
                 }
                 catch (SqlException ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Ошибка: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
         else
         {
-            MessageBox.Show("Database connection is lost.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            MessageBox.Show("Потеряно соединение с базой данных.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -130,15 +137,16 @@ public class Form1 : Form
     {
         if (IsDatabaseConnected())
         {
-            using (DeleteCarForm deleteCarForm = new DeleteCarForm(this.connection))
+            using (DeletePersonForm deleteCarForm = new DeletePersonForm(this.connection))
             {
                 deleteCarForm.ShowDialog();
-                Console.WriteLine("Delete car form closed");
+                Console.WriteLine("Delete Person form closed");
             }
         }
         else
         {
-            MessageBox.Show("Database connection is lost.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            MessageBox.Show("Потеряно соединение с базой данных.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -147,15 +155,16 @@ public class Form1 : Form
     {
         if (IsDatabaseConnected())
         {
-            using (AddCarForm addCarForm = new AddCarForm(this.connection))
+            using (AddPersonForm addCarForm = new AddPersonForm(this.connection))
             {
                 addCarForm.ShowDialog();
-                Console.WriteLine("Add car form closed");
+                Console.WriteLine("Add Person form closed");
             }
         }
         else
         {
-            MessageBox.Show("Database connection is lost.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            MessageBox.Show("Потеряно соединение с базой данных.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         }
     }

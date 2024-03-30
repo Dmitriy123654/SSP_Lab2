@@ -3,11 +3,11 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Data;
 
-public class ViewAllCarsForm : Form
+public class ViewAllPeopleForm : Form
 {
     private DataGridView dataGridView;
 
-    public ViewAllCarsForm(SqlConnection connection)
+    public ViewAllPeopleForm(SqlConnection connection)
     {
         FormLayout();
         try
@@ -16,7 +16,7 @@ public class ViewAllCarsForm : Form
         }
         catch (System.Exception ex)
         {
-            MessageBox.Show("Error: " + ex.Message);
+            MessageBox.Show("Ошибка: " + ex.Message);
             this.DialogResult = DialogResult.Cancel;
             return;
         }
@@ -35,8 +35,8 @@ public class ViewAllCarsForm : Form
     private void FormLayout()
     {
         // Set up form properties
-        this.Name = "View All Cars";
-        this.Text = "View All Cars";
+        this.Name = "Показать всех людей";
+        this.Text = "Показать всех людей";
         this.Size = new System.Drawing.Size(500, 400);
         this.StartPosition = FormStartPosition.CenterScreen;
 
@@ -50,12 +50,12 @@ public class ViewAllCarsForm : Form
 
     private void PopulateData(SqlConnection connection)
     {
-        // Retrieve data from the "Cars" table
-        using (SqlCommand command = new SqlCommand("SELECT * FROM Cars", connection))
+        // Retrieve data from the "People" table
+        using (SqlCommand command = new SqlCommand("SELECT * FROM People", connection))
         {
             if (!CheckDatabaseConnection(connection))
             {
-                MessageBox.Show("Database connection lost", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Потеряно соединение с базой данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.DialogResult = DialogResult.Cancel;
                 return;
             }
@@ -72,13 +72,13 @@ public class ViewAllCarsForm : Form
             }
             catch (SqlException ex)
             {
-                MessageBox.Show("Database connection error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Потеряно соединение с базой данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.DialogResult = DialogResult.Cancel;
                 return;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Database connection error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Потеряно соединение с базой данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.DialogResult = DialogResult.Cancel;
             }
         }
