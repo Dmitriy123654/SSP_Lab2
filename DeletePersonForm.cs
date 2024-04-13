@@ -66,13 +66,13 @@ public class DeletePersonForm : Form
 
         try
         {
-            if (!CarExistsInDatabase())
+            if (!PersonExistsInDatabase())
             {
                 MessageBox.Show("Отсутствует человек с заданным ID", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.DialogResult = DialogResult.Cancel;
                 return;
             }
-            RemoveCarFromDatabase();
+            RemovePeopleFromDatabase();
         }
         catch (SqlException ex)
         {
@@ -90,18 +90,32 @@ public class DeletePersonForm : Form
         this.DialogResult = DialogResult.OK;
     }
 
-    private void RemoveCarFromDatabase()
+   
+
+    private void RemovePeopleFromDatabase()
     {
+        int.TryParse(_idTextBox.Text, out int parsedId);
+        int id = parsedId;
+
+
+        // Удаление связанных записей
+        using (SqlCommand deleteCascadeCommand = new SqlCommand("DELETE FROM CascadeTable2 WHERE Id = @Id ", connection))
+        {
+            deleteCascadeCommand.Parameters.AddWithValue("@Id", id);
+            deleteCascadeCommand.Parameters.AddWithValue("@FIO", id.ToString());
+            deleteCascadeCommand.ExecuteNonQuery();
+        }
+
+
         using (SqlCommand command = new SqlCommand("DeletePerson", connection))
         {
-            int.TryParse(_idTextBox.Text, out int parsedId);
+            int.TryParse(_idTextBox.Text, out int Id1);
             Id = parsedId;
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@Id", Id);
             command.ExecuteNonQuery();
         }
     }
-
     private bool ValidateInput()
     {
         if (!int.TryParse(_idTextBox.Text, out int year) || year < 0)
@@ -110,7 +124,7 @@ public class DeletePersonForm : Form
         return true;
     }
 
-    private bool CarExistsInDatabase()
+    public bool PersonExistsInDatabase()
     {
         using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM People WHERE id = @Id", connection))
         {
@@ -121,4 +135,5 @@ public class DeletePersonForm : Form
             return count > 0;
         }
     }
+
 }

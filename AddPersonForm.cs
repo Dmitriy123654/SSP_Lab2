@@ -92,7 +92,7 @@ public class AddPersonForm : Form
 
         try
         {
-            AddCarToDatabase();
+            AddPersonToDatabase();
         }
         catch (SqlException ex)
         {
@@ -123,7 +123,7 @@ public class AddPersonForm : Form
         return true;
     }
 
-    private void AddCarToDatabase()
+    private void AddPersonToDatabase()
     {
         // Retrieve the entered values from the modal form
         int.TryParse(_YearOfBirthTextBox.Text, out int year);
